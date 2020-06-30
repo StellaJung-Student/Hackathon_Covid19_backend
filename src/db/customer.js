@@ -14,6 +14,15 @@ const customerSchema = mongoose.Schema(
       type: String,
       required: "Phone Number is required",
     },
+    email: {
+      type: String,
+      unique: true,
+      required: "email is required",
+    },
+    password: {
+      type: String,
+      required: "password is required",
+    },
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
