@@ -1,5 +1,6 @@
 import express from 'express';
 import User from '../db/user';
+import tryCatch from '../shared/tryCatch';
 
 const userRouter = express.Router();
 
@@ -14,10 +15,14 @@ userRouter.get('/:email', async (req, res) => {
   res.json(user);
 });
 
-userRouter.post('/', async (req, res) => {
-  const user = User.create(req.body);
-  res.json(user);
-});
+userRouter.post(
+  '/',
+  tryCatch(async (req, res) => {
+    const user = new User(req.body);
+    await user.save();
+    res.json(user);
+  })
+);
 
 userRouter.patch('/:keyword', async (req, res) => {
   const updatedData = req.body;

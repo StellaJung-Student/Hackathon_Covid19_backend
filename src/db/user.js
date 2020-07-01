@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import validator from 'validator';
-const userSchema = mongoose.Schema(
+const userSchema = Schema(
   {
     email: {
       type: String,
@@ -23,14 +23,14 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      minLength: 6,
+      minlength: 6,
       required: [true, 'Password is required'],
       select: false,
     },
     passwordConfirm: {
       type: String,
       required: [true, 'Password confirmation is required'],
-      minLength: 6,
+      minlength: 6,
       validate: {
         validator: function (password) {
           return password === this.password;
