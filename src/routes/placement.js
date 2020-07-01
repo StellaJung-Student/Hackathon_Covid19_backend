@@ -1,13 +1,14 @@
-import express from "express";
-import DineIn from "../db/dineIn";
+import express from 'express';
+import DineIn from '../db/placement';
 
 const dineInRouter = express.Router();
 
-dineInRouter.get("/", async (req, res) => {
+dineInRouter.get('/', async (req, res) => {
   const dineIns = await DineIn.find();
+  res.json(dineIns);
 });
 
-dineInRouter.get("/:keyword", async (req, res) => {
+dineInRouter.get('/:keyword', async (req, res) => {
   const { keyword } = req.params;
   console.log(keyword);
   const dineIn = await DineIn.findOne({
@@ -19,12 +20,12 @@ dineInRouter.get("/:keyword", async (req, res) => {
   });
 });
 
-dineInRouter.post("/", async (req, res) => {
+dineInRouter.post('/', async (req, res) => {
   const dineIn = DineIn.create(req.body);
   res.json(dineIn);
 });
 
-dineInRouter.patch("/:keyword", async (req, res) => {
+dineInRouter.patch('/:keyword', async (req, res) => {
   const updatedData = req.body;
   const { keyword } = req.params;
   let dineIn = await DineIn.findOne({
@@ -43,7 +44,7 @@ dineInRouter.patch("/:keyword", async (req, res) => {
   res.json(dineIn);
 });
 
-dineInRouter.delete("/:keyword", async (req, res) => {
+dineInRouter.delete('/:keyword', async (req, res) => {
   const { keyword } = req.params;
   let dineIn = await DineIn.findOne({
     $or: [
