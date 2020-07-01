@@ -1,17 +1,17 @@
 import express from 'express';
-import DineIn from '../db/placement';
+import Placement from '../db/placement';
 
-const dineInRouter = express.Router();
+const placementRouter = express.Router();
 
-dineInRouter.get('/', async (req, res) => {
-  const dineIns = await DineIn.find();
+placementRouter.get('/', async (req, res) => {
+  const dineIns = await Placement.find();
   res.json(dineIns);
 });
 
-dineInRouter.get('/:keyword', async (req, res) => {
+placementRouter.get('/:keyword', async (req, res) => {
   const { keyword } = req.params;
   console.log(keyword);
-  const dineIn = await DineIn.findOne({
+  const dineIn = await Placement.findOne({
     $or: [
       { numOfPeople: keyword },
       { seatPosition: keyword },
@@ -20,15 +20,15 @@ dineInRouter.get('/:keyword', async (req, res) => {
   });
 });
 
-dineInRouter.post('/', async (req, res) => {
-  const dineIn = DineIn.create(req.body);
+placementRouter.post('/', async (req, res) => {
+  const dineIn = Placement.create(req.body);
   res.json(dineIn);
 });
 
-dineInRouter.patch('/:keyword', async (req, res) => {
+placementRouter.patch('/:keyword', async (req, res) => {
   const updatedData = req.body;
   const { keyword } = req.params;
-  let dineIn = await DineIn.findOne({
+  let dineIn = await Placement.findOne({
     $or: [
       { numOfPeople: keyword },
       { seatPosition: keyword },
@@ -37,16 +37,16 @@ dineInRouter.patch('/:keyword', async (req, res) => {
   });
   console.log(dineIn, updatedData);
   if (dineIn) {
-    await DineIn.update({ _id: dineIn._id }, updatedData);
+    await Placement.update({ _id: dineIn._id }, updatedData);
   }
 
-  dineIn = await DineIn.findById(dineIn._id);
+  dineIn = await Placement.findById(dineIn._id);
   res.json(dineIn);
 });
 
-dineInRouter.delete('/:keyword', async (req, res) => {
+placementRouter.delete('/:keyword', async (req, res) => {
   const { keyword } = req.params;
-  let dineIn = await DineIn.findOne({
+  let dineIn = await Placement.findOne({
     $or: [
       { numOfPeople: keyword },
       { seatPosition: keyword },
@@ -54,9 +54,9 @@ dineInRouter.delete('/:keyword', async (req, res) => {
     ],
   });
   if (dineIn) {
-    dineIn = await DineIn.deleteOne({ _id: dineIn._id });
+    dineIn = await Placement.deleteOne({ _id: dineIn._id });
   }
   res.json(dineIn);
 });
 
-export default dineInRouter;
+export default placementRouter;

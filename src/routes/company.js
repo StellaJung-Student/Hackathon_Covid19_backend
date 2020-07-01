@@ -1,52 +1,90 @@
 import express from 'express';
-import Restaurant from '../db/company';
+import Company from '../db/company';
+import tryCatch from '../shared/tryCatch';
+import AppError from '../shared/appError';
 
-const restaurantRouter = express.Router();
+const companyRouter = express.Router();
 
-restaurantRouter.get('/', async (req, res) => {
-  const users = await Restaurant.find();
-  res.json(users);
-});
+companyRouter.get(
+  '/',
+  tryCatch(async (req, res) => {
+    const companies = await Company.find();
+    res.json({
+      status: 'success',
+      data: companies,
+    });
+  })
+);
 
-restaurantRouter.get('/:keyword', async (req, res) => {
-  const { keyword } = req.params;
-  console.log(keyword);
-  const restaurant = await Restaurant.findOne({
-    $or: [{ name: keyword }, { address: keyword }],
-  });
+companyRouter.get(
+  '/:keyword',
+  tryCatch(async (req, res, next) => {
+    const { keyword } = req.params;
+    const company = await Company.findOne({
+      $or: [{ name: keyword }, { address: keyword }],
+    });
+    if (!company) {
+      return next(new AppError('No company is found', 404));
+    }
+    res.json({
+      status: 'success',
+      data: company,
+    });
+  })
+);
 
-  res.json(restaurant);
-});
+companyRouter.post(
+  '/',
+  tryCatch(async (req, res) => {
+    const company = new Company(req.body);
+    company.save();
+    res.json({
+      status: 'success',
+      data: company,
+    });
+  })
+);
 
-restaurantRouter.post('/', async (req, res) => {
-  const restaurant = Restaurant.create(req.body);
-  res.json(restaurant);
-});
+companyRouter.patch(
+  '/:keyword',
+  tryCatch(async (req, res, next) => {
+    const updatedData = req.body;
+    const { keyword } = req.params;
+    let company = await Company.findOne({
+      $or: [{ name: keyword }, { address: keyword }],
+    });
+    if (!company) {
+      return next(new AppError('No company is found', 404));
+    }
+    await Company.findByIdAndUpdate(company._id, updatedData, {
+      new: true,
+      runValidators: true,
+    });
 
-restaurantRouter.patch('/:keyword', async (req, res) => {
-  const updatedData = req.body;
-  const { keyword } = req.params;
-  let restaurant = await Restaurant.findOne({
-    $or: [{ name: keyword }, { address: keyword }],
-  });
-  console.log(restaurant, updatedData);
-  if (restaurant) {
-    await Restaurant.update({ _id: restaurant._id }, updatedData);
-  }
+    company = await Company.findById(company._id);
+    res.json({
+      status: 'success',
+      data: company,
+    });
+  })
+);
 
-  restaurant = await Restaurant.findById(restaurant._id);
-  res.json(restaurant);
-});
+companyRouter.delete(
+  '/:keyword',
+  tryCatch(async (req, res, next) => {
+    const { keyword } = req.params;
+    let company = await Company.findOne({
+      $or: [{ name: keyword }, { address: keyword }],
+    });
+    if (!company) {
+      return next(new AppError('No company is found', 404));
+    }
+    await Company.findByIdAndDelete(company._id);
+    res.json({
+      status: 'success',
+      data: company,
+    });
+  })
+);
 
-restaurantRouter.delete('/:keyword', async (req, res) => {
-  const { keyword } = req.params;
-  let restaurant = await Restaurant.findOne({
-    $or: [{ name: keyword }, { address: keyword }],
-  });
-  if (restaurant) {
-    restaurant = await Restaurant.deleteOne({ _id: restaurant._id });
-  }
-  res.json(restaurant);
-});
-
-export default restaurantRouter;
+export default companyRouter;
