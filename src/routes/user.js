@@ -15,15 +15,6 @@ userRouter.get('/:email', async (req, res) => {
   res.json(user);
 });
 
-userRouter.post(
-  '/',
-  tryCatch(async (req, res) => {
-    const user = new User(req.body);
-    await user.save();
-    res.json(user);
-  })
-);
-
 userRouter.patch('/:keyword', async (req, res) => {
   const updatedData = req.body;
   const { keyword } = req.params;

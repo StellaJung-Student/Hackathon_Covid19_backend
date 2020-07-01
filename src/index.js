@@ -2,6 +2,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import logger from 'morgan';
 import './db';
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
@@ -15,7 +18,10 @@ import errorHandler from './shared/errorHandler';
 const app = express();
 
 const PORT = process.env.PORT;
+app.use(logger('dev'));
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 app.use('/', authRouter);
 app.use('/users', userRouter);

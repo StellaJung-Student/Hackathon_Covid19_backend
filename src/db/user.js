@@ -1,5 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import validator from 'validator';
+import bcrypt from 'bcrypt';
 const userSchema = Schema(
   {
     email: {
@@ -48,6 +49,18 @@ const userSchema = Schema(
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   }
 );
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  this.password = await bcrypt.hash(this.password, await bcrypt.genSalt(12));
+  this.passwordConfirm = undefined;
+  next();
+});
+
+userSchema.methods.checkPassword = async function (password, userPassword) {
+  return await bcrypt.compare(password, userPassword);
+};
 
 const user = mongoose.model('User', userSchema);
 export default user;
