@@ -15,14 +15,19 @@ const serviceSchema = Schema(
       ref: 'Company',
       required: [true, 'Company is required'],
     },
-    category: {
-      type: Schema.Types.ObjectId,
-      ref: 'Category',
-      required: [true, 'Category is required'],
-    },
+    // category: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: 'Category',
+    //   required: [true, 'Category is required'],
+    // },
     rating: {
       type: Number,
       default: 3,
+    },
+    url: {
+      type: String,
+      default:
+        'https://www.pngfind.com/pngs/m/665-6659827_enterprise-comments-default-company-logo-png-transparent-png.png',
     },
   },
   {
