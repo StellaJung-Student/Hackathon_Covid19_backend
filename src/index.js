@@ -5,7 +5,6 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import logger from 'morgan';
-import './db';
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
 import placementRouter from './routes/placement';
@@ -16,10 +15,11 @@ import AppError from './shared/appError';
 import errorHandler from './shared/errorHandler';
 
 const app = express();
+import './db';
 
 const PORT = process.env.PORT;
 app.use(logger('dev'));
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
