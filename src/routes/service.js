@@ -1,52 +1,52 @@
 import express from 'express';
-import item from '../db/service';
+import Service from '../db/service';
 
-const itemRouter = express.Router();
+const serviceRouter = express.Router();
 
-itemRouter.get('/', async (req, res) => {
-  const items = await item.find();
-  res.json(items);
+serviceRouter.get('/', async (req, res) => {
+  const services = await Service.find();
+  res.json(services);
 });
 
-itemRouter.get('/:keyword', async (req, res) => {
+serviceRouter.get('/:keyword', async (req, res) => {
   const { keyword } = req.params;
   console.log(keyword);
-  const item = await item.findOne({
-    $or: [{ name: keyword }, { desc: keyword }, { price: keyword }],
+  const Service = await Service.findOne({
+    $or: [{ name: keyword }, { company: keyword }],
   });
 
-  res.json(item);
+  res.json(Service);
 });
 
-itemRouter.post('/', async (req, res) => {
-  const item = item.create(req.body);
-  res.json(item);
+serviceRouter.post('/', async (req, res) => {
+  const Service = Service.create(req.body);
+  res.json(Service);
 });
 
-itemRouter.patch('/:keyword', async (req, res) => {
+serviceRouter.patch('/:keyword', async (req, res) => {
   const updatedData = req.body;
   const { keyword } = req.params;
-  let item = await item.findOne({
-    $or: [{ name: keyword }, { desc: keyword }, { price: keyword }],
+  let Service = await Service.findOne({
+    $or: [{ name: keyword }, { company: keyword }],
   });
-  console.log(item, updatedData);
-  if (item) {
-    await item.update({ _id: item._id }, updatedData);
+  console.log(Service, updatedData);
+  if (Service) {
+    await Service.update({ _id: Service._id }, updatedData);
   }
 
-  item = await item.findById(item._id);
-  res.json(item);
+  Service = await Service.findById(Service._id);
+  res.json(Service);
 });
 
-itemRouter.delete('/:keyword', async (req, res) => {
+serviceRouter.delete('/:keyword', async (req, res) => {
   const { keyword } = req.params;
-  let item = await item.findOne({
-    $or: [{ name: keyword }, { desc: keyword }, { price: keyword }],
+  let Service = await Service.findOne({
+    $or: [{ name: keyword }, { company: keyword }],
   });
-  if (item) {
-    item = await item.deleteOne({ _id: item._id });
+  if (Service) {
+    Service = await Service.deleteOne({ _id: Service._id });
   }
-  res.json(item);
+  res.json(Service);
 });
 
-export default itemRouter;
+export default serviceRouter;
