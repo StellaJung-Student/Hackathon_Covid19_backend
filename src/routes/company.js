@@ -37,7 +37,7 @@ companyRouter.post(
   '/',
   tryCatch(async (req, res) => {
     const company = new Company(req.body);
-    company.save();
+    await company.save();
     res.json({
       status: 'success',
       data: company,
